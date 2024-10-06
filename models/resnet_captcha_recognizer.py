@@ -1,3 +1,5 @@
+import os.path
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -19,25 +21,26 @@ learning_rate = 0.001
 num_epochs = 10
 
 image_directory = '../datasets/fournierp_captcha-version-2-images'
+
 img_filename = '2en7g.png'
-training, evaluation, prediction = True, True, True
+training, evaluation, prediction = True, False, False
 
 
-def train_run(model, image_dir, transform, criterion, optimizer, device):
-    dataset = CaptchaDataset(image_dir=image_dir, transform=transform)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+def train_run(model, dataset:CaptchaDataset, transform, criterion, optimizer, device):
+    train_dataset, test_dataset = dataset.train_test_split()
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
     for epoch in range(num_epochs):
-        loss = train_epoch(model, dataloader, criterion, optimizer, device, epoch+1)
+        loss = train_epoch(model, train_loader, criterion, optimizer, device, epoch+1)
         # print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss:.4f}")
+        eval_epoch(model, val_loader, criterion, device, epoch+1)
 
     torch.save(model.state_dict(), 'captcha_resnet50.pth')
 
 
-def eval_run(model, image_dir, transform, criterion, device):
-    dataset = CaptchaDataset(image_dir=image_dir, transform=transform)
+def eval_run(model, dataset:CaptchaDataset, transform, criterion, device):
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
     avg_loss, accuracy = eval_epoch(model, dataloader, criterion, device)
     print(f"Accuracy: {accuracy:.4f}, Loss: {avg_loss:.4f}")
 
@@ -55,16 +58,18 @@ def main(training=False, evaluation=False, prediction=False):
 
     model = ResNetCaptchaModel(CHAR_TYPES_NUM, CAPTCHA_LENGTH).to(device)
 
+    dataset = CaptchaDataset(image_dir=os.path.abspath(image_directory), transform=transform)
+
     if training:
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-        train_run(model, image_directory, transform, criterion, optimizer, device)
+        train_run(model, dataset, transform, criterion, optimizer, device)
 
     if evaluation:
         criterion = nn.CrossEntropyLoss()
         checkpoint = torch.load("captcha_resnet50.pth", weights_only=True)
         model.load_state_dict(checkpoint)
-        eval_run(model, image_directory, transform, criterion, device)
+        eval_run(model, dataset, transform, criterion, device)
 
     if prediction:
         checkpoint = torch.load("captcha_resnet50.pth", weights_only=True)
