@@ -7,6 +7,8 @@ from torchvision.transforms.v2.functional import convert_image_dtype
 
 from tqdm import tqdm
 
+from datasets.dataset import CaptchaDataset
+
 
 class ResNetCaptchaModel(nn.Module):
     '''https://medium.com/swlh/solving-captchas-using-resnet-50-without-using-ocr-3bdfbd0004a4'''
@@ -103,3 +105,45 @@ def predict(model, path_to_img, device, transform=None):
     captcha_text = ''.join([chr(c + ord('0')) if c < 10 else chr(c - 10 + ord('A')) for c in predicted_chars])
 
     return captcha_text
+
+
+def differentiable_predict(model, path_to_img, device, criterion, transform=None):
+    model.eval()
+    # image = Image.open(path_to_img).convert('RGB')
+    image = read_image(path_to_img, mode=ImageReadMode.RGB)
+    image = convert_image_dtype(image, dtype=torch.float)
+    image.requires_grad = True
+    image = image.to(device)
+
+    if transform:
+        image = transform(image)
+    image = image.unsqueeze(0)  # Add batch dimension (1, C, H, W)
+
+    # assert image.requires_grad, "Image should have requires_grad=True"
+
+    outputs = model(image)  # (1, num_chars, num_classes_per_char)
+    label = torch.tensor(CaptchaDataset._get_label_from_filename(path_to_img.split('/')[-1])).to(device)
+    label = label.unsqueeze(0)
+    loss = 0
+    for i in range(model.num_chars):
+        loss += criterion(outputs[:, i, :], label[:, i])
+
+    # assert image.requires_grad, "Image should have requires_grad=True"
+
+    model.zero_grad()
+    image.retain_grad()
+    loss.backward()
+
+    # assert image.requires_grad, "Image should have requires_grad=True"
+
+    predicted_chars = []
+    for i in range(model.num_chars):
+        _, predicted = torch.max(outputs[:, i, :], 1)
+        predicted_chars.append(predicted.item())
+
+    # assert image.requires_grad, "Image should have requires_grad=True"
+
+    # Convert indices back to characters (0-9 and A-Z)
+    captcha_text = ''.join([chr(c + ord('0')) if c < 10 else chr(c - 10 + ord('A')) for c in predicted_chars])
+    # print(captcha_text, image.grad)
+    return captcha_text, image.grad.squeeze(0)
