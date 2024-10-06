@@ -119,8 +119,6 @@ def differentiable_predict(model, path_to_img, device, criterion, transform=None
         image = transform(image)
     image = image.unsqueeze(0)  # Add batch dimension (1, C, H, W)
 
-    # assert image.requires_grad, "Image should have requires_grad=True"
-
     outputs = model(image)  # (1, num_chars, num_classes_per_char)
     label = torch.tensor(CaptchaDataset._get_label_from_filename(path_to_img.split('/')[-1])).to(device)
     label = label.unsqueeze(0)
@@ -128,20 +126,14 @@ def differentiable_predict(model, path_to_img, device, criterion, transform=None
     for i in range(model.num_chars):
         loss += criterion(outputs[:, i, :], label[:, i])
 
-    # assert image.requires_grad, "Image should have requires_grad=True"
-
     model.zero_grad()
     image.retain_grad()
     loss.backward()
-
-    # assert image.requires_grad, "Image should have requires_grad=True"
 
     predicted_chars = []
     for i in range(model.num_chars):
         _, predicted = torch.max(outputs[:, i, :], 1)
         predicted_chars.append(predicted.item())
-
-    # assert image.requires_grad, "Image should have requires_grad=True"
 
     # Convert indices back to characters (0-9 and A-Z)
     captcha_text = ''.join([chr(c + ord('0')) if c < 10 else chr(c - 10 + ord('A')) for c in predicted_chars])
