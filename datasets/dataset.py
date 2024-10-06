@@ -8,15 +8,18 @@ import os
 import random
 
 class CaptchaDataset(Dataset):
-    def __init__(self, image_dir, transform=None):
-        self.image_dir = image_dir
+    def __init__(self, image_dir=None, image_paths=None, transform=None):
         self.transform = transform
         if image_dir:
             self.image_paths = [os.path.join(image_dir, img) for img in os.listdir(image_dir)]
-            self.labels = [self._get_label_from_filename(img) for img in os.listdir(image_dir)]
+        elif image_paths:
+            self.image_paths = image_paths
 
-    def _get_label_from_filename(self, filename):
-        label = filename.split('.')[0]  # Assuming the label is in the filename
+        self.labels = [self._get_label_from_filename(img) for img in self.image_paths]
+
+    @staticmethod
+    def _get_label_from_filename(filename):
+        label = filename.split('/')[-1].split('.')[0]  # Assuming the label is in the filename
         encoded_label = []
         for char in label:
             if char.isdigit():
@@ -26,28 +29,17 @@ class CaptchaDataset(Dataset):
         return encoded_label
 
     def train_test_split(self, ratio:float=0.2) -> (Dataset, Dataset):
-        train = CaptchaDataset(None)
-        test = CaptchaDataset(None)
-        train.image_dir = self.image_dir
-        test.image_dir = self.image_dir
-
-        imgs = list(zip(self.image_paths, self.labels))
+        imgs = list(self.image_paths)
         random.shuffle(imgs)
 
         n = len(self)
         train_size = n - int(n * ratio)
 
-        train.image_paths = []
-        train.labels = []
-        for item in imgs[:train_size]:
-            train.image_paths.append(item[0])
-            train.labels.append(item[1])
+        train_paths = imgs[:train_size]
+        test_paths = imgs[train_size:]
 
-        test.image_paths = []
-        test.labels = []
-        for item in imgs[train_size:]:
-            test.image_paths.append(item[0])
-            test.labels.append(item[1])
+        train = CaptchaDataset(image_paths=train_paths, transform=self.transform)
+        test = CaptchaDataset(image_paths=test_paths, transform=self.transform)
 
         return train, test
 
