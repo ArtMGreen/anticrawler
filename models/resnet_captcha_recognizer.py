@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import os
 
 import torchvision.transforms.v2 as transforms
 
@@ -17,11 +18,13 @@ batch_size = 32
 learning_rate = 0.001
 num_epochs = 10
 
-image_directory = '../datasets/fournierp_captcha-version-2-images'
-attacked_directory = '../datasets/FGSM_attacked'
-used_directory = attacked_directory
-img_filename = '2b827.png'
-training, evaluation, prediction = False, True, False
+ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+image_directory = os.path.join(ROOT_DIR,'datasets','fournierp_captcha-version-2-images')
+attacked_directory = os.path.join(ROOT_DIR,'datasets','FGSM_attacked')
+
+used_directory = image_directory
+img_filename = '3cpwb.png'
+training, evaluation, prediction = True, False, False
 
 
 def train_run(model, dataset: CaptchaDataset, transform, criterion, optimizer, device):

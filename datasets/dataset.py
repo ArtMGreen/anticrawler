@@ -19,7 +19,7 @@ class CaptchaDataset(Dataset):
 
     @staticmethod
     def _get_label_from_filename(filename):
-        label = filename.split('/')[-1].split('.')[0]  # Assuming the label is in the filename
+        label = os.path.split(filename)[-1].split('.')[0]  # Assuming the label is in the filename
         encoded_label = []
         for char in label:
             if char.isdigit():

@@ -107,13 +107,16 @@ def predict(model, path_to_img, device, transform=None):
     return captcha_text
 
 
-def differentiable_predict(model, path_to_img, device, criterion, transform=None):
+def differentiable_predict(model, path_to_img, device, criterion, transform=None, img=None):
     model.eval()
     # image = Image.open(path_to_img).convert('RGB')
-    image = read_image(path_to_img, mode=ImageReadMode.RGB)
-    image = convert_image_dtype(image, dtype=torch.float)
-    image.requires_grad = True
-    image = image.to(device)
+    if img is not None:
+        image = img.to(device)
+    else:
+        image = read_image(path_to_img, mode=ImageReadMode.RGB)
+        image = convert_image_dtype(image, dtype=torch.float)
+        image.requires_grad = True
+        image = image.to(device)
 
     if transform:
         image = transform(image)
