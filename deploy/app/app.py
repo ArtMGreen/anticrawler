@@ -6,11 +6,21 @@ import requests
 ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 IMAGES_DIR = os.path.join(ROOT_DIR,'images')
 
-# API endpoints
-UPLOAD_URL = "http://localhost:8000/upload"
-ATTACK_URL = "http://localhost:8000/attack/"
-DEFEND_URL = "http://localhost:8000/defend/"
-PREDICT_URL = "http://localhost:8000/inference/"
+# API endpoints ==================================================================
+
+# for local run
+# UPLOAD_URL = "http://localhost:8000/upload"
+# ATTACK_URL = "http://localhost:8000/attack/"
+# DEFEND_URL = "http://localhost:8000/defend/"
+# PREDICT_URL = "http://localhost:8000/inference/"
+
+# for docker run
+UPLOAD_URL = "http://fastapi:8000/upload"
+ATTACK_URL = "http://fastapi:8000/attack/"
+DEFEND_URL = "http://fastapi:8000/defend/"
+PREDICT_URL = "http://fastapi:8000/inference/"
+
+# ================================================================================
 
 # Fetch available images from the directory
 def get_available_images():

@@ -69,7 +69,7 @@ def pgd(model, path_to_img, save_path, device='cpu'):
     adv_img_pil.save(save_path)
 
 
-def cw(model, path_to_img, save_path, device='cuda'):
+def cw(model, path_to_img, save_path, device='cpu'):
     def cw_l2(model, loss_fn, X, y):
         def f(delta, X, y, model, loss_fn):
             outputs = model(X)

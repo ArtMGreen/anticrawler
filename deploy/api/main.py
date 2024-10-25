@@ -2,11 +2,9 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 import uvicorn
 import os
 from models.resnet_captcha_model_definition import predict, ResNetCaptchaModel
-from torch import load
-from torch.nn import CrossEntropyLoss
+import torch
 from torchvision.transforms import Normalize, Compose
 import attacks
-
 
 CHAR_TYPES_NUM = 36  # Assumption: 10 digits + 26 letters
 CAPTCHA_LENGTH = 5  # Assumption: CAPTCHA length is 5
@@ -14,11 +12,12 @@ CAPTCHA_LENGTH = 5  # Assumption: CAPTCHA length is 5
 ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 IMAGES_DIR = os.path.join(ROOT_DIR, 'deploy', 'images')
 
-CHKPT_DIR = os.path.join(ROOT_DIR, 'models', 'captcha_resnet50.pth')
+CHKPT_DIR = os.path.join(os.getcwd(), 'models', 'captcha_resnet50.pth')
 MODEL = ResNetCaptchaModel(CHAR_TYPES_NUM, CAPTCHA_LENGTH)
-MODEL.load_state_dict(load(CHKPT_DIR, weights_only=True))
+MODEL.load_state_dict(torch.load(CHKPT_DIR, weights_only=True, map_location=torch.device('cpu')))
 
-DEVICE = 'cuda'
+# DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE = 'cpu'
 MODEL.to(DEVICE)
 
 app = FastAPI()
