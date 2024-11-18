@@ -1,57 +1,108 @@
+import os
+import random
 import torch
 from torch.utils.data import Dataset
-
 from torchvision.io import read_image, ImageReadMode
 from torchvision.transforms.v2.functional import convert_image_dtype
 
-import os
-import random
 
 class CaptchaDataset(Dataset):
     def __init__(self, image_dir=None, image_paths=None, transform=None):
+        """
+        Args:
+            image_dir (str): Directory containing the images.
+            image_paths (list[str]): List of individual image file paths.
+            transform: Optional transformations to apply to the images.
+        """
         self.transform = transform
+
         if image_dir:
             self.image_paths = [os.path.join(image_dir, img) for img in os.listdir(image_dir)]
         elif image_paths:
             self.image_paths = image_paths
+        else:
+            raise ValueError("Either 'image_dir' or 'image_paths' must be provided.")
 
-        self.labels = [self._get_label_from_filename(img) for img in self.image_paths]
+        self.labels = [self._encode_label(self._get_label_string_from_filename(path)) for path in self.image_paths]
 
     @staticmethod
-    def _get_label_from_filename(filename):
-        label = os.path.split(filename)[-1].split('.')[0]  # Assuming the label is in the filename
-        encoded_label = []
-        for char in label:
-            if char.isdigit():
-                encoded_label.append(ord(char) - ord('0'))  # Encode digits as 0-9
-            elif char.isalpha():
-                encoded_label.append(ord(char.upper()) - ord('A') + 10)  # Encode letters as 10-35
-        return encoded_label
+    def _get_label_string_from_filename(filename):
+        """
+        Extract the raw label string from the filename - the part of the filename before the first '.'.
 
-    def train_test_split(self, ratio:float=0.2) -> (Dataset, Dataset):
-        imgs = list(self.image_paths)
-        random.shuffle(imgs)
+        Args:
+            filename (str): Full path or filename.
 
-        n = len(self)
-        train_size = n - int(n * ratio)
+        Returns:
+            str: Label as a string.
+        """
+        return os.path.splitext(os.path.basename(filename))[0]
 
-        train_paths = imgs[:train_size]
-        test_paths = imgs[train_size:]
+    @staticmethod
+    def _encode_label(label):
+        """
+        Encode the label string into a list of integers.
 
-        train = CaptchaDataset(image_paths=train_paths, transform=self.transform)
-        test = CaptchaDataset(image_paths=test_paths, transform=self.transform)
+        Characters are encoded as:
+            - Digits ('0'-'9') -> 0-9
+            - Letters ('A'-'Z', case-insensitive) -> 10-35
 
-        return train, test
+        Args:
+            label (str): Raw label string.
+
+        Returns:
+            list[int]: Encoded label as a list of integers.
+        """
+        return [
+            (ord(char) - ord('0')) if char.isdigit() else (ord(char.upper()) - ord('A') + 10)
+            for char in label
+        ]
+
+    def train_test_split(self, test_ratio=0.2):
+        """
+        Split the dataset into two (train and test) subsets.
+
+        Args:
+            test_ratio (float): Proportion of the second set.
+
+        Returns:
+            tuple[CaptchaDataset, CaptchaDataset]: Two subsets of the dataset.
+        """
+        shuffled_paths = self.image_paths[:]
+        random.shuffle(shuffled_paths)
+
+        split_idx = int(len(shuffled_paths) * (1 - test_ratio))
+        train_paths = shuffled_paths[:split_idx]
+        test_paths = shuffled_paths[split_idx:]
+
+        train_dataset = CaptchaDataset(image_paths=train_paths, transform=self.transform)
+        test_dataset = CaptchaDataset(image_paths=test_paths, transform=self.transform)
+        return train_dataset, test_dataset
 
     def __len__(self):
         return len(self.image_paths)
 
-    def __getitem__(self, idx):
-        image = read_image(self.image_paths[idx], mode=ImageReadMode.RGB)
-        image = convert_image_dtype(image, dtype=torch.float)
-        label = self.labels[idx]
+    def _load_image(self, path):
+        """
+        Load and preprocess an image given its file path.
 
+        Args:
+            path (str): Path to the image file.
+
+        Returns:
+            torch.Tensor: Preprocessed image tensor.
+        """
+        image = read_image(path, mode=ImageReadMode.RGB)
+        image = convert_image_dtype(image, dtype=torch.float)
         if self.transform:
             image = self.transform(image)
+        return image
 
-        return image, torch.tensor(label)
+    def __getitem__(self, idx):
+        """
+        Returns:
+            tuple[torch.Tensor, torch.Tensor]: The image and label tensors.
+        """
+        image = self._load_image(self.image_paths[idx])
+        label = torch.tensor(self.labels[idx], dtype=torch.long)
+        return image, label
