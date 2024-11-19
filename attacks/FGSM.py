@@ -1,15 +1,14 @@
 import os
 import torch
 import torchvision.transforms.v2 as transforms
+from torchvision.transforms.v2.functional import to_pil_image
+
 import numpy as np
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 from datasets.dataset import CaptchaDataset
 from models.resnet_captcha_model_definition import ResNetCaptchaModel, differentiable_predict
-
-import matplotlib.pyplot as plt
-
-from torchvision.transforms.v2.functional import to_pil_image
 
 
 def show(imgs):
@@ -24,11 +23,12 @@ def show(imgs):
 
 
 def FGSM_attack_image(model, image, label, device, epsilon=0.0, save_path=None):
+    image = image.to(device)
+
     prediction, dL_dx = differentiable_predict(model, image, label, device)
     evil_noise = torch.sign(dL_dx)
-    image = image.to(evil_noise.device)
     evil_image = image + epsilon * evil_noise
-    evil_image = torch.clamp(evil_image, 0, 1).detach().cpu()
+    evil_image = torch.clamp(evil_image, 0, 1).detach()
 
     if save_path is not None:
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -64,5 +64,5 @@ if __name__ == "__main__":
     model.load_state_dict(checkpoint)
     model.eval()
 
-    dataset_to_attack = CaptchaDataset(image_dir=image_directory, transform=transform)
-    FGSM_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.5)
+    dataset_to_attack = CaptchaDataset(image_dir=image_directory, transform=None)
+    FGSM_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.05)

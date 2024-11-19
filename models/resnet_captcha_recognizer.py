@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import os
@@ -18,11 +17,12 @@ num_epochs = 10
 
 ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 image_directory = os.path.join(ROOT_DIR, 'datasets', 'fournierp_captcha-version-2-images')
-attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'FGSM_attacked')
+FGSM_attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'FGSM_attacked')
+PGD_attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'PGD_attacked')
 
-used_directory = image_directory
+used_directory = PGD_attacked_directory
 img_filename = '5x5nx.png'
-training, evaluation, prediction = True, False, False
+training, evaluation, prediction = False, True, False
 
 
 def train_run(model, dataset: CaptchaDataset, optimizer, device):
@@ -57,7 +57,7 @@ def main(training=False, evaluation=False, prediction=False):
 
     model = ResNetCaptchaModel().to(device)
 
-    dataset = CaptchaDataset(image_dir=used_directory, transform=transform)
+    dataset = CaptchaDataset(image_dir=used_directory, transform=None)
 
     if training:
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
