@@ -1,6 +1,23 @@
+# ide
 .ipynb_checkpoints/
-datasets/
+.idea/
+
+# environment
 pytorch_env/
-deploy/images/
+
+# cache
 deploy/api/__pycache__/
+datasets/__pycache__/
+models/__pycache__/
+
+# model parameters (changes after retraining)
+models/captcha_resnet50.pth
+
+# test script
 deploy/api/test.py
+
+# data
+datasets/FGSM_attacked/
+datasets/fournierp_captcha-version-2-images/
+datasets/Large_Captcha_Dataset/
+deploy/images/
