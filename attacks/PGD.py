@@ -9,7 +9,7 @@ from datasets.dataset import CaptchaDataset
 from models.resnet_captcha_model_definition import ResNetCaptchaModel, differentiable_predict
 
 
-def PGD_attack_image(model, image, label, device, epsilon=0.0, alpha=0.01, num_iter=40, save_path=None):
+def PGD_attack_image(model, image, label, device, epsilon=1.0, alpha=0.01, num_iter=40, save_path=None):
     image = image.to(device)
     label = label.to(device)
     original_image = image.clone().detach()
@@ -30,7 +30,7 @@ def PGD_attack_image(model, image, label, device, epsilon=0.0, alpha=0.01, num_i
 
     return image
 
-def PGD_attack_dataset(model, dataset, attacked_directory, device, epsilon=0.0, alpha=0.01, num_iter=40):
+def PGD_attack_dataset(model, dataset, attacked_directory, device, epsilon=1.0, alpha=0.01, num_iter=40):
     for idx in tqdm(range(len(dataset)), total=len(dataset), leave=True, desc="Attacking via PGD"):
         image, label = dataset[idx]
         image_path = dataset.image_paths[idx]

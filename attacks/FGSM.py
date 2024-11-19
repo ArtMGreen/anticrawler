@@ -22,7 +22,7 @@ def show(imgs):
         axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
 
 
-def FGSM_attack_image(model, image, label, device, epsilon=0.0, save_path=None):
+def FGSM_attack_image(model, image, label, device, epsilon=1.0, save_path=None):
     image = image.to(device)
 
     prediction, dL_dx = differentiable_predict(model, image, label, device)
@@ -38,7 +38,7 @@ def FGSM_attack_image(model, image, label, device, epsilon=0.0, save_path=None):
     return evil_image
 
 
-def FGSM_attack_dataset(model, dataset, attacked_directory, device, epsilon=0.0):
+def FGSM_attack_dataset(model, dataset, attacked_directory, device, epsilon=1.0):
     for idx in tqdm(range(len(dataset)), total=len(dataset), leave=True, desc="Attacking via FGSM"):
         image, label = dataset[idx]
         image_path = dataset.image_paths[idx]
