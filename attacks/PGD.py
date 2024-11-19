@@ -10,6 +10,7 @@ from models.resnet_captcha_model_definition import ResNetCaptchaModel, different
 
 
 def PGD_attack_image(model, image, label, device, epsilon=1.0, alpha=0.01, num_iter=40, save_path=None):
+    model.eval()
     image = image.to(device)
     label = label.to(device)
     original_image = image.clone().detach()
@@ -40,6 +41,7 @@ def PGD_attack_dataset(model, dataset, attacked_directory, device, epsilon=1.0, 
 if __name__ == "__main__":
     image_directory = '../datasets/fournierp_captcha-version-2-images'
     attacked_directory = '../datasets/PGD_attacked'
+
     transform = transforms.Compose([
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])

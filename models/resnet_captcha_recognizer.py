@@ -19,9 +19,10 @@ ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__
 image_directory = os.path.join(ROOT_DIR, 'datasets', 'fournierp_captcha-version-2-images')
 FGSM_attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'FGSM_attacked')
 PGD_attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'PGD_attacked')
+CW_attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'CW_attacked')
 
-used_directory = PGD_attacked_directory
-img_filename = '5x5nx.png'
+used_directory = CW_attacked_directory
+img_filename = 'gwnm6.png'
 training, evaluation, prediction = False, True, False
 
 

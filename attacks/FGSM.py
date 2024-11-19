@@ -23,6 +23,7 @@ def show(imgs):
 
 
 def FGSM_attack_image(model, image, label, device, epsilon=1.0, save_path=None):
+    model.eval()
     image = image.to(device)
 
     prediction, dL_dx = differentiable_predict(model, image, label, device)
