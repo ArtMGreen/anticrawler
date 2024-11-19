@@ -12,37 +12,35 @@ from models.resnet_captcha_model_definition import train_epoch
 from models.resnet_captcha_model_definition import eval_epoch
 from models.resnet_captcha_model_definition import predict
 
-CHAR_TYPES_NUM = 36  # Assumption: 10 digits + 26 letters
-CAPTCHA_LENGTH = 5  # Assumption: CAPTCHA length is 5
 batch_size = 32
 learning_rate = 0.001
 num_epochs = 10
 
 ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
-image_directory = os.path.join(ROOT_DIR,'datasets','fournierp_captcha-version-2-images')
-attacked_directory = os.path.join(ROOT_DIR,'datasets','FGSM_attacked')
+image_directory = os.path.join(ROOT_DIR, 'datasets', 'fournierp_captcha-version-2-images')
+attacked_directory = os.path.join(ROOT_DIR, 'datasets', 'FGSM_attacked')
 
 used_directory = image_directory
-img_filename = '3cpwb.png'
+img_filename = '5x5nx.png'
 training, evaluation, prediction = True, False, False
 
 
-def train_run(model, dataset: CaptchaDataset, transform, criterion, optimizer, device):
+def train_run(model, dataset: CaptchaDataset, optimizer, device):
     train_dataset, test_dataset = dataset.train_test_split()
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
     for epoch in range(num_epochs):
-        loss = train_epoch(model, train_loader, criterion, optimizer, device, epoch + 1)
+        loss = train_epoch(model, train_loader, optimizer, device, epoch + 1)
         # print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss:.4f}")
-        eval_epoch(model, val_loader, criterion, device, epoch + 1)
+        eval_epoch(model, val_loader, device, epoch + 1)
 
     torch.save(model.state_dict(), 'captcha_resnet50.pth')
 
 
-def eval_run(model, dataset: CaptchaDataset, transform, criterion, device):
+def eval_run(model, dataset: CaptchaDataset, device):
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-    avg_loss, accuracy = eval_epoch(model, dataloader, criterion, device)
+    avg_loss, accuracy = eval_epoch(model, dataloader, device)
     print(f"Accuracy: {accuracy:.4f}, Loss: {avg_loss:.4f}")
 
 
@@ -57,20 +55,18 @@ def main(training=False, evaluation=False, prediction=False):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    model = ResNetCaptchaModel(CHAR_TYPES_NUM, CAPTCHA_LENGTH).to(device)
+    model = ResNetCaptchaModel().to(device)
 
     dataset = CaptchaDataset(image_dir=used_directory, transform=transform)
 
     if training:
-        criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-        train_run(model, dataset, transform, criterion, optimizer, device)
+        train_run(model, dataset, optimizer, device)
 
     if evaluation:
-        criterion = nn.CrossEntropyLoss()
         checkpoint = torch.load("captcha_resnet50.pth", weights_only=True)
         model.load_state_dict(checkpoint)
-        eval_run(model, dataset, transform, criterion, device)
+        eval_run(model, dataset, device)
 
     if prediction:
         checkpoint = torch.load("captcha_resnet50.pth", weights_only=True)
