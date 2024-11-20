@@ -10,14 +10,19 @@ class CaptchaDataset(Dataset):
     def __init__(self, image_dir=None, image_paths=None, transform=None):
         """
         Args:
-            image_dir (str): Directory containing the images.
+            image_dir (str/list[str]): Directory or a list of directories containing the images.
             image_paths (list[str]): List of individual image file paths.
             transform: Optional transformations to apply to the images.
         """
         self.transform = transform
 
         if image_dir:
-            self.image_paths = [os.path.join(image_dir, img) for img in os.listdir(image_dir)]
+            self.image_paths = list()
+            if not isinstance(image_dir, list):
+                image_dir = [image_dir]
+            for single_dir in image_dir:
+                self.image_paths.extend([os.path.join(single_dir, img) for img in os.listdir(single_dir)])
+
         elif image_paths:
             self.image_paths = image_paths
         else:
