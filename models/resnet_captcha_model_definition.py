@@ -132,8 +132,8 @@ def predict(model, path_to_img, device, transform=None):
     image = convert_image_dtype(image, dtype=torch.float)
 
     if transform is not None:
-        image = transform(image).unsqueeze(0)  # Add batch dimension (1, C, H, W)
-    image = image.to(device)
+        image = transform(image)
+    image = image.to(device).unsqueeze(0)  # Add batch dimension (1, C, H, W)
 
     with torch.no_grad():
     #     outputs = model(image)  # (1, num_chars, num_classes_per_char)
@@ -169,34 +169,12 @@ def differentiable_predict_from_path(model, path_to_img, device, transform=None)
     image = convert_image_dtype(image, dtype=torch.float)
     if transform is not None:
         image = transform(image)
-    # image = image.unsqueeze(0)  # Add batch dimension (1, C, H, W)
+    # image = image.unsqueeze(0)  # Add batch dimension (1, C, H, W) - will be done in differential_predict()
 
     label_str = CaptchaDataset._get_label_string_from_filename(path_to_img)
     label = torch.tensor(CaptchaDataset._encode_label(label_str), dtype=torch.long)
-    # label = label.unsqueeze(0)
+    # label = label.unsqueeze(0) - will be done in differential_predict()
 
-
-
-    # outputs = model(image)  # (1, num_chars, num_classes_per_char)
-    #
-    # loss = 0
-    # for i in range(model.num_chars):
-    #     loss += model.criterion(outputs[:, i, :], label[:, i])
-
-    # loss, correct, texts = model.inference(image, label)
-    # captcha_text = texts[0]
-    #
-    # model.zero_grad()
-    # image.retain_grad()
-    # loss.backward()
     captcha_text, gradient = differentiable_predict(model, image, label, device)
 
-    # predicted_chars = []
-    # for i in range(model.num_chars):
-    #     _, predicted = torch.max(outputs[:, i, :], 1)
-    #     predicted_chars.append(predicted.item())
-
-    # # Convert indices back to characters (0-9 and A-Z)
-    # captcha_text = ''.join([chr(c + ord('0')) if c < 10 else chr(c - 10 + ord('A')) for c in predicted_chars])
-    # # print(captcha_text, image.grad)
     return captcha_text, gradient
