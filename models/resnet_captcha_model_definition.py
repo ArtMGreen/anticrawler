@@ -94,12 +94,12 @@ def train_epoch(model, dataloader, optimizer, device, epoch_num):
     return train_loss / len(dataloader)
 
 
-def eval_epoch(model, dataloader, device, epoch_num=0):
+def eval_epoch(model, dataloader, device, epoch_msg=""):
     model.eval()
     total_loss = 0
     total_correct = 0
     total_chars = 0
-    loop = tqdm(enumerate(dataloader), total=len(dataloader), desc=f"Epoch {epoch_num}, evaluation", leave=True)
+    loop = tqdm(enumerate(dataloader), total=len(dataloader), desc=epoch_msg, leave=True)
 
     with torch.no_grad():
         for batch_idx, (images, labels) in loop:
