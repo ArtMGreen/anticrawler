@@ -31,12 +31,21 @@ def PGD_attack_image(model, image, label, device, epsilon=1.0, alpha=0.01, num_i
 
     return image
 
+
+def PGD_attack_image_from_path(model, input_path, save_path, device='cpu', epsilon=0.0, alpha=0.01, num_iter=40):
+    """For purely illustrative purposes of the web app; no transforms available"""
+    d = CaptchaDataset(image_paths=[input_path])
+    image, label = d[0]
+    PGD_attack_image(model, image, label, device, epsilon=epsilon, alpha=alpha, num_iter=num_iter, save_path=save_path)
+
+
 def PGD_attack_dataset(model, dataset, attacked_directory, device, epsilon=1.0, alpha=0.01, num_iter=40):
     for idx in tqdm(range(len(dataset)), total=len(dataset), leave=True, desc="Attacking via PGD"):
         image, label = dataset[idx]
         image_path = dataset.image_paths[idx]
         save_path = os.path.join(attacked_directory, os.path.basename(image_path))
         PGD_attack_image(model, image, label, device, epsilon=epsilon, alpha=alpha, num_iter=num_iter, save_path=save_path)
+
 
 if __name__ == "__main__":
     image_directory = '../datasets/fournierp_captcha-version-2-images'
@@ -54,4 +63,4 @@ if __name__ == "__main__":
     model.eval()
 
     dataset_to_attack = CaptchaDataset(image_dir=image_directory, transform=None)
-    PGD_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.05, alpha=0.01, num_iter=10)
+    PGD_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.08, alpha=0.01, num_iter=20)

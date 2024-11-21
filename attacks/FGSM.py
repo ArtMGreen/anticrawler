@@ -39,6 +39,13 @@ def FGSM_attack_image(model, image, label, device, epsilon=1.0, save_path=None):
     return evil_image
 
 
+def FGSM_attack_image_from_path(model, input_path, save_path, device='cpu', epsilon=0.0):
+    """For purely illustrative purposes of the web app; no transforms available"""
+    d = CaptchaDataset(image_paths=[input_path])
+    image, label = d[0]
+    FGSM_attack_image(model, image, label, device, epsilon=epsilon, save_path=save_path)
+
+
 def FGSM_attack_dataset(model, dataset, attacked_directory, device, epsilon=1.0):
     for idx in tqdm(range(len(dataset)), total=len(dataset), leave=True, desc="Attacking via FGSM"):
         image, label = dataset[idx]
@@ -66,4 +73,4 @@ if __name__ == "__main__":
     model.eval()
 
     dataset_to_attack = CaptchaDataset(image_dir=image_directory, transform=None)
-    FGSM_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.05)
+    FGSM_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.08)
