@@ -17,4 +17,6 @@ class Thresholding(nn.Module):
             img_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,
         )
 
-        return torch.tensor(image_result)
+        # Convert the single-channel image to a three-channel image
+        image_result_3ch = cv2.cvtColor(image_result, cv2.COLOR_GRAY2BGR)
+        return torch.tensor(image_result_3ch)
