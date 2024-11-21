@@ -39,7 +39,7 @@ def FGSM_attack_image(model, image, label, device, epsilon=1.0, save_path=None):
     return evil_image
 
 
-def FGSM_attack_image_from_path(model, input_path, save_path, device='cpu', epsilon=0.0):
+def FGSM_attack_image_from_path(model, input_path, save_path, device='cpu', epsilon=0.08):
     """For purely illustrative purposes of the web app; no transforms available"""
     d = CaptchaDataset(image_paths=[input_path])
     image, label = d[0]

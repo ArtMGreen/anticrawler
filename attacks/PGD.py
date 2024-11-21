@@ -32,7 +32,7 @@ def PGD_attack_image(model, image, label, device, epsilon=1.0, alpha=0.01, num_i
     return image
 
 
-def PGD_attack_image_from_path(model, input_path, save_path, device='cpu', epsilon=0.0, alpha=0.01, num_iter=40):
+def PGD_attack_image_from_path(model, input_path, save_path, device='cpu', epsilon=0.08, alpha=0.01, num_iter=40):
     """For purely illustrative purposes of the web app; no transforms available"""
     d = CaptchaDataset(image_paths=[input_path])
     image, label = d[0]
