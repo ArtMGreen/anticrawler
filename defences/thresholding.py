@@ -1,6 +1,8 @@
 import cv2
+import numpy as np
 from torch import nn
 import torch
+import torchvision.transforms.v2 as transforms
 
 
 class Thresholding(nn.Module):
@@ -8,15 +10,13 @@ class Thresholding(nn.Module):
         super(Thresholding, self).__init__()
 
     def forward(self, image):
-        img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
+        img_gray = transforms.Grayscale()(image)
+        img_np = (img_gray.squeeze().cpu().numpy() * 255).astype(np.uint8)
         # Applying Otsu's method setting the flag value into cv.THRESH_OTSU.
         # Use a bimodal image as an input.
         # Optimal threshold value is determined automatically.
         otsu_threshold, image_result = cv2.threshold(
-            img_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,
+            img_np, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,
         )
-
-        # Convert the single-channel image to a three-channel image
-        image_result_3ch = cv2.cvtColor(image_result, cv2.COLOR_GRAY2BGR)
-        return torch.tensor(image_result_3ch)
+        binary_img = torch.from_numpy(image_result).float() / 255.0
+        return torch.stack([binary_img, binary_img, binary_img], dim=0)
