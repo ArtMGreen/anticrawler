@@ -1,7 +1,6 @@
 from torchvision.io import read_image, ImageReadMode
 from torchvision.transforms.v2.functional import convert_image_dtype, to_pil_image
 from torch import float as float_dtype
-# from torchvision.transforms import Compose
 import os
 
 
@@ -22,6 +21,13 @@ def load_image(path, transform):
 
 
 def save_image(img_tensor, path):
+    """
+    Save an image tensor into the file path.
+
+    Args:
+        img_tensor (torch.Tensor): An image tensor to save.
+        path (str): Path to the image file.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
     adv_image_pil = to_pil_image(img_tensor.squeeze(0).detach().cpu())
     adv_image_pil.save(path)
