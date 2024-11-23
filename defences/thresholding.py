@@ -3,7 +3,7 @@ import numpy as np
 from torch import nn
 import torch
 import torchvision.transforms.v2 as transforms
-from defences.io_utils import _load_image, _save_image
+from defences.io_utils import load_image, save_image
 
 
 class Thresholding(nn.Module):
@@ -24,5 +24,5 @@ class Thresholding(nn.Module):
 
 
 def thresholding_defend_image_from_path(input_path, save_path):
-    res_tensor = _load_image(input_path, Thresholding())
-    _save_image(res_tensor, save_path)
+    res_tensor = load_image(input_path, Thresholding())
+    save_image(res_tensor, save_path)

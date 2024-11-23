@@ -24,7 +24,11 @@ get_urls = [
     # "http://localhost:8000/inference/?filename=2nf26.png",
     "http://localhost:8000/defend/?method=MEDIAN_FILTER&filename=2nf26.png",
     "http://localhost:8000/defend/?method=THRESHOLDING&filename=2nf26.png",
-    "http://localhost:8000/defend/?method=GRADIENT_TRANSFORM&filename=2nf26.png"
+    "http://localhost:8000/defend/?method=GRADIENT_TRANSFORM&filename=2nf26.png",
+    "http://localhost:8000/defend/?method=GAUSSIAN_BLUR&filename=2nf26.png",
+    "http://localhost:8000/defend/?method=GRAYSCALE&filename=2nf26.png",
+    "http://localhost:8000/defend/?method=GAUSSIAN_NOISE&filename=2nf26.png",
+    "http://localhost:8000/defend/?method=NORMALIZE&filename=2nf26.png",
 ]
 
 for url in get_urls:

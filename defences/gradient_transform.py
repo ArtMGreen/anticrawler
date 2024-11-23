@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import numpy as np
-from defences.io_utils import _load_image, _save_image
+from defences.io_utils import load_image, save_image
 
 
 class GradientTransform(nn.Module):
@@ -25,5 +25,5 @@ class GradientTransform(nn.Module):
 
 
 def gradient_transform_defend_image_from_path(input_path, save_path):
-    res_tensor = _load_image(input_path, GradientTransform())
-    _save_image(res_tensor, save_path)
+    res_tensor = load_image(input_path, GradientTransform())
+    save_image(res_tensor, save_path)

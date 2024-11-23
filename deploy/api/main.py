@@ -82,6 +82,14 @@ def defend(method: str, filename: str):
         defences.thresholding(src_path, dst_path)
     elif method == "GRADIENT_TRANSFORM":
         defences.gradient_transform(src_path, dst_path)
+    elif method == "GAUSSIAN_BLUR":
+        defences.gaussian_blur(src_path, dst_path)
+    elif method == "GRAYSCALE":
+        defences.grayscale(src_path, dst_path)
+    elif method == "GAUSSIAN_NOISE":
+        defences.gaussian_noise(src_path, dst_path)
+    elif method == "NORMALIZE":
+        defences.normalize(src_path, dst_path)
     else:
         raise HTTPException(status_code=401, detail="Method Not Allowed")
 

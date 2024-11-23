@@ -5,7 +5,7 @@ from torch import float as float_dtype
 import os
 
 
-def _load_image(path, transform):
+def load_image(path, transform):
     """
     Load and preprocess an image given its file path.
 
@@ -23,7 +23,7 @@ def _load_image(path, transform):
     return image
 
 
-def _save_image(img_tensor, path):
+def save_image(img_tensor, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     adv_image_pil = to_pil_image(img_tensor.squeeze(0).detach().cpu())
     adv_image_pil.save(path)

@@ -98,7 +98,10 @@ if st.button("Apply Attack"):
 
 # Defense section
 st.subheader("Defense")
-defense_method = st.selectbox("Select defense method", ["method1", "method2", "method3"])
+defense_method = st.selectbox("Select defense method", [
+    "MEDIAN_FILTER", "THRESHOLDING", "GRADIENT_TRANSFORM",
+    "GAUSSIAN_BLUR", "GRAYSCALE", "GAUSSIAN_NOISE", "NORMALIZE"
+])
 if st.button("Apply Defense"):
     ok, filename = defend_image(defense_method, st.session_state['selected_image'])
     if ok:
