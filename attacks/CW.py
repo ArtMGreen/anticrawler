@@ -1,6 +1,5 @@
 import os
 import torch
-import torchvision.transforms.v2 as transforms
 from torchvision.transforms.v2.functional import to_pil_image
 
 from tqdm import tqdm
@@ -48,14 +47,14 @@ def CW_attack_image(model, image, label, device, c=0.5, lr=0.01, num_iter=100, k
     return adv_image.squeeze(0)
 
 
-def CW_attack_image_from_path(model, input_path, save_path, device='cpu', c=0.5, lr=0.01, num_iter=15, kappa=0):
+def CW_attack_image_from_path(model, input_path, save_path, device='cpu', c=1, lr=0.01, num_iter=15, kappa=0):
     """For purely illustrative purposes of the web app; no transforms available"""
     d = CaptchaDataset(image_paths=[input_path])
     image, label = d[0]
     CW_attack_image(model, image, label, device, c=c, lr=lr, num_iter=num_iter, kappa=kappa, save_path=save_path)
 
 
-def CW_attack_dataset(model, dataset, attacked_directory, device, c=0.5, lr=0.01, num_iter=100, kappa=0):
+def CW_attack_dataset(model, dataset, attacked_directory, device, c=1, lr=0.01, num_iter=100, kappa=0):
     for idx in tqdm(range(len(dataset)), total=len(dataset), leave=True, desc="Attacking via CW"):
         image, label = dataset[idx]
         image_path = dataset.image_paths[idx]
@@ -66,10 +65,6 @@ def CW_attack_dataset(model, dataset, attacked_directory, device, c=0.5, lr=0.01
 if __name__ == "__main__":
     image_directory = '../datasets/fournierp_captcha-version-2-images'
     attacked_directory = '../datasets/CW_attacked'
-
-    transform = transforms.Compose([
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

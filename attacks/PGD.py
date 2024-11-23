@@ -1,6 +1,5 @@
 import os
 import torch
-import torchvision.transforms.v2 as transforms
 from torchvision.transforms.v2.functional import to_pil_image
 
 from tqdm import tqdm
@@ -51,10 +50,6 @@ if __name__ == "__main__":
     image_directory = '../datasets/fournierp_captcha-version-2-images'
     attacked_directory = '../datasets/PGD_attacked'
 
-    transform = transforms.Compose([
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = ResNetCaptchaModel().to(device)
@@ -63,4 +58,4 @@ if __name__ == "__main__":
     model.eval()
 
     dataset_to_attack = CaptchaDataset(image_dir=image_directory, transform=None)
-    PGD_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.08, alpha=0.01, num_iter=20)
+    PGD_attack_dataset(model, dataset_to_attack, attacked_directory, device, epsilon=0.08, alpha=0.02, num_iter=20)

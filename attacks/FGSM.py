@@ -1,25 +1,11 @@
 import os
 import torch
-import torchvision.transforms.v2 as transforms
 from torchvision.transforms.v2.functional import to_pil_image
 
-import numpy as np
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 
 from datasets.dataset import CaptchaDataset
 from models.resnet_captcha_model_definition import ResNetCaptchaModel, differentiable_predict
-
-
-def show(imgs):
-    if not isinstance(imgs, list):
-        imgs = [imgs]
-    fig, axs = plt.subplots(ncols=len(imgs), squeeze=False)
-    for i, img in enumerate(imgs):
-        img = img.detach()
-        img = to_pil_image(img)
-        axs[0, i].imshow(np.asarray(img))
-        axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
 
 
 def FGSM_attack_image(model, image, label, device, epsilon=1.0, save_path=None):
@@ -57,13 +43,6 @@ def FGSM_attack_dataset(model, dataset, attacked_directory, device, epsilon=1.0)
 if __name__ == "__main__":
     image_directory = '../datasets/fournierp_captcha-version-2-images'
     attacked_directory = '../datasets/FGSM_attacked'
-    transform = transforms.Compose([
-        # transforms.Resize((224, 224)),
-        # -- deprecated | transforms.ToTensor(),
-        # -- redundant | transforms.ToImage(),
-        # -- redundant | transforms.ToDtype(torch.float32, scale=True),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
