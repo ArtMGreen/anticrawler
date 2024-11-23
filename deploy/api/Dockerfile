@@ -1,15 +1,18 @@
 FROM python:3.11
 WORKDIR /deploy/anticrawler-api
 
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
+
 COPY requirements.txt /deploy/anticrawler-api/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY deploy/api /deploy/anticrawler-api
+COPY deploy/api/main.py /deploy/anticrawler-api/main.py
 
 COPY datasets/dataset.py /deploy/anticrawler-api/datasets/dataset.py
-COPY datasets/__init__.py /deploy/anticrawler-api/datasets/__init__.py
 
 COPY models /deploy/anticrawler-api/models
+COPY attacks /deploy/anticrawler-api/attacks
+COPY defences /deploy/anticrawler-api/defences
 
 EXPOSE 8000
 

@@ -6,3 +6,4 @@ requests
 streamlit
 tqdm
 python-multipart
+opencv-python
