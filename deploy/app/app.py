@@ -12,6 +12,9 @@ PREDICT_URL = os.getenv('PREDICT_URL', "http://localhost:8000/inference/")
 ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 IMAGES_DIR = os.path.join(ROOT_DIR,'images')
 
+# Determine the environment (e.g., via an environment variable)
+environment = os.getenv('ENV_TYPE', 'local')
+
 # Fetch available images from the directory
 def get_available_images():
     return [f for f in os.listdir(IMAGES_DIR) if os.path.isfile(os.path.join(IMAGES_DIR, f))]
@@ -65,9 +68,14 @@ if uploaded_file is not None:
 # Main section: Show selected image
 st.subheader("Selected image")
 if st.session_state['selected_image']:
-    st.image(os.path.join(IMAGES_DIR, st.session_state['selected_image']),
-             caption=f"Image name: {st.session_state['selected_image']}",
-             use_column_width=True)
+    if environment == 'docker':
+        st.image(os.path.join(IMAGES_DIR, st.session_state['selected_image']),
+                    caption=f"Image name: {st.session_state['selected_image']}",
+                    use_container_width=True)
+    else:
+        st.image(os.path.join(IMAGES_DIR, st.session_state['selected_image']),
+                    caption=f"Image name: {st.session_state['selected_image']}",
+                    use_column_width=True)
 
 # Prediction section
 if st.button("Predict"):
@@ -82,7 +90,14 @@ if st.button("Apply Attack"):
     if ok:
         st.success(f"Attack applied: {attack_method}")
         # Show the attacked file
-        st.image(os.path.join(IMAGES_DIR, filename), caption=f"Attacked image: {filename}",use_column_width=True)
+        if environment == 'docker':
+            st.image(os.path.join(IMAGES_DIR, filename),
+                     caption=f"Attacked image: {filename}",
+                     use_container_width=True)
+        else:
+            st.image(os.path.join(IMAGES_DIR, filename),
+                     caption=f"Attacked image: {filename}",
+                     use_column_width=True)
     else:
         st.error("Failed to apply attack.")
 
@@ -98,7 +113,14 @@ if st.button("Apply Defense"):
         st.success(f"Defense applied: {defense_method}")
         # Set the defended file as the selected image
         # Show the defended image
-        st.image(os.path.join(IMAGES_DIR, filename), caption=f"Defended image: {filename}",use_column_width=True)
+        if environment == 'docker':
+            st.image(os.path.join(IMAGES_DIR, filename),
+                     caption=f"Defended image: {filename}",
+                     use_container_width=True)
+        else:
+            st.image(os.path.join(IMAGES_DIR, filename),
+                     caption=f"Defended image: {filename}",
+                     use_column_width=True)
     else:
         st.error("Failed to apply defense.")
 

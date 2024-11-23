@@ -16,7 +16,7 @@ defences/__pycache__/
 models/captcha_resnet50.pth
 
 # test script
-deploy/api/test.py
+deploy/test.py
 
 # data
 datasets/FGSM_attacked/
