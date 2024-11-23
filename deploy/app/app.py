@@ -67,7 +67,7 @@ st.subheader("Selected image")
 if st.session_state['selected_image']:
     st.image(os.path.join(IMAGES_DIR, st.session_state['selected_image']),
              caption=f"Image name: {st.session_state['selected_image']}",
-             use_column_width=True)
+             use_container_width=True)
 
 # Prediction section
 if st.button("Predict"):
