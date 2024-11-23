@@ -3,6 +3,7 @@ import numpy as np
 from torch import nn
 import torch
 import torchvision.transforms.v2 as transforms
+from defences.io_utils import _load_image, _save_image
 
 
 class Thresholding(nn.Module):
@@ -20,3 +21,8 @@ class Thresholding(nn.Module):
         )
         binary_img = torch.from_numpy(image_result).float() / 255.0
         return torch.stack([binary_img, binary_img, binary_img], dim=0)
+
+
+def thresholding_defend_image_from_path(input_path, save_path):
+    res_tensor = _load_image(input_path, Thresholding())
+    _save_image(res_tensor, save_path)

@@ -3,8 +3,9 @@ import uvicorn
 import os
 from models.resnet_captcha_model_definition import predict, ResNetCaptchaModel
 import torch
-from torchvision.transforms import Normalize, Compose
+from torchvision.transforms import Compose
 import attacks
+import defences
 
 CHAR_TYPES_NUM = 36  # Assumption: 10 digits + 26 letters
 CAPTCHA_LENGTH = 5  # Assumption: CAPTCHA length is 5
@@ -75,7 +76,14 @@ def defend(method: str, filename: str):
     src_path = os.path.join(IMAGES_DIR, filename)
     dst_path = os.path.join(IMAGES_DIR, new_filename)
 
-    #TODO IMPLEMENT
+    if method == "MEDIAN_FILTER":
+        defences.median_filter(src_path, dst_path)
+    elif method == "THRESHOLDING":
+        defences.thresholding(src_path, dst_path)
+    elif method == "GRADIENT_TRANSFORM":
+        defences.gradient_transform(src_path, dst_path)
+    else:
+        raise HTTPException(status_code=401, detail="Method Not Allowed")
 
     return {"filename": new_filename}
 
@@ -83,11 +91,7 @@ def defend(method: str, filename: str):
 @app.get("/inference/")
 def inference(filename: str):
     transform = Compose([
-        # transforms.Resize((224, 224)),
-        # -- deprecated | transforms.ToTensor(),
-        # -- redundant | transforms.ToImage(),
-        # -- redundant | transforms.ToDtype(torch.float32, scale=True),
-        Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        defences.Identity(),
     ])
     prediction = predict(MODEL, os.path.join(IMAGES_DIR, filename), DEVICE, transform)
     return {"label": prediction}

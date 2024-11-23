@@ -12,16 +12,19 @@ def test_case(url, request_type, files=None):
     print(resp.headers)
     print(resp.history)
 
-
+#
 # test_case(
 #     'http://localhost:8000/upload','POST',
-#     {'file': open('some_absplute_path', 'rb')}
+#     {'file': open('2nf26.png', 'rb')}
 # )
 
 get_urls = [
-    "http://localhost:8000/attack/?method=PGD&filename=2pfpn.png",
-    "http://localhost:8000/defend/?method=fdfffffffff&filename=2cg58.png",
-    "http://localhost:8000/inference/?filename=2cg58.png"
+    # "http://localhost:8000/attack/?method=PGD&filename=2nf26.png",
+    # "http://localhost:8000/defend/?method=fdfffffffff&filename=2nf26.png",
+    # "http://localhost:8000/inference/?filename=2nf26.png",
+    "http://localhost:8000/defend/?method=MEDIAN_FILTER&filename=2nf26.png",
+    "http://localhost:8000/defend/?method=THRESHOLDING&filename=2nf26.png",
+    "http://localhost:8000/defend/?method=GRADIENT_TRANSFORM&filename=2nf26.png"
 ]
 
 for url in get_urls:

@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from torch import nn
 import torch
+from defences.io_utils import _load_image, _save_image
 
 class MedianFilter(nn.Module):
     def __init__(self, kernel_size):
@@ -20,3 +21,8 @@ class MedianFilter(nn.Module):
 
         filtered_tensor = torch.from_numpy(filtered_np).permute(2, 0, 1)  # (H, W, C) -> (C, H, W)
         return filtered_tensor
+
+
+def median_filter_defend_image_from_path(input_path, save_path):
+    res_tensor = _load_image(input_path, MedianFilter(kernel_size=5))
+    _save_image(res_tensor, save_path)

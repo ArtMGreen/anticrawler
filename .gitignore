@@ -9,6 +9,8 @@ pytorch_env/
 deploy/api/__pycache__/
 datasets/__pycache__/
 models/__pycache__/
+attacks/__pycache__/
+defences/__pycache/
 
 # model parameters (changes after retraining)
 models/captcha_resnet50.pth
