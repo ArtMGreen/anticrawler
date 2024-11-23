@@ -18,14 +18,13 @@ environment = os.getenv('ENV_TYPE', 'local')
 
 if environment == 'docker':
     CHKPT_DIR = os.path.join(os.getcwd(), 'models', 'captcha_resnet50.pth')
+    DEVICE = 'cpu'
 else:
     CHKPT_DIR = os.path.join(ROOT_DIR, 'models', 'captcha_resnet50.pth')
+    DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 MODEL = ResNetCaptchaModel(CHAR_TYPES_NUM, CAPTCHA_LENGTH)
-MODEL.load_state_dict(torch.load(CHKPT_DIR, weights_only=True, map_location=torch.device('cpu')))
-
-# DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-DEVICE = 'cpu'
+MODEL.load_state_dict(torch.load(CHKPT_DIR, weights_only=True, map_location=torch.device(DEVICE)))
 MODEL.to(DEVICE)
 
 app = FastAPI()

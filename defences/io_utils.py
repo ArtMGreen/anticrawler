@@ -17,8 +17,6 @@ def load_image(path, transform):
     """
     image = read_image(path, mode=ImageReadMode.RGB)
     image = convert_image_dtype(image, dtype=float_dtype)
-    # composed_transform = Compose([transform])
-    # image = composed_transform(image)
     image = transform(image)
     return image
 
