@@ -13,15 +13,13 @@ CAPTCHA_LENGTH = 5  # Assumption: CAPTCHA length is 5
 ROOT_DIR = os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 IMAGES_DIR = os.path.join(ROOT_DIR, 'deploy', 'images')
 
-# Model checkpoint path ==========================================================
+# Determine the environment (e.g., via an environment variable)
+environment = os.getenv('ENV_TYPE', 'local')
 
-# for docker run
-# CHKPT_DIR = os.path.join(os.getcwd(), 'models', 'captcha_resnet50.pth')
-
-# for local run
-CHKPT_DIR = os.path.join(ROOT_DIR, 'models', 'captcha_resnet50.pth')
-
-# ================================================================================
+if environment == 'docker':
+    CHKPT_DIR = os.path.join(os.getcwd(), 'models', 'captcha_resnet50.pth')
+else:
+    CHKPT_DIR = os.path.join(ROOT_DIR, 'models', 'captcha_resnet50.pth')
 
 MODEL = ResNetCaptchaModel(CHAR_TYPES_NUM, CAPTCHA_LENGTH)
 MODEL.load_state_dict(torch.load(CHKPT_DIR, weights_only=True, map_location=torch.device('cpu')))
