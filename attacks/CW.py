@@ -64,6 +64,7 @@ def CW_attack_dataset(model, dataset, attacked_directory, device, c=1, lr=0.01, 
 
 if __name__ == "__main__":
     image_directory = '../datasets/fournierp_captcha-version-2-images'
+    test_directory = '../datasets/test_set'
     attacked_directory = '../datasets/CW_attacked'
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -73,5 +74,5 @@ if __name__ == "__main__":
     model.load_state_dict(checkpoint)
     model.eval()
 
-    dataset_to_attack = CaptchaDataset(image_dir=image_directory, transform=None)
-    CW_attack_dataset(model, dataset_to_attack, attacked_directory, device, c=1, lr=0.05, num_iter=15, kappa=1)
+    dataset_to_attack = CaptchaDataset(image_dir=test_directory, transform=None)
+    CW_attack_dataset(model, dataset_to_attack, attacked_directory, device, c=1, lr=0.05, num_iter=20, kappa=1)
