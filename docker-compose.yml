@@ -33,6 +33,7 @@ services:
       - ATTACK_URL=http://fastapi:8000/attack/
       - DEFEND_URL=http://fastapi:8000/defend/
       - PREDICT_URL=http://fastapi:8000/inference/
+      - ENV_TYPE=docker
 
 networks:
   app-network:
