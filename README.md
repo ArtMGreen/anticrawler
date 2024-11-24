@@ -9,29 +9,36 @@ This repository explores different adversarial attacks and defensive methods app
 
 The project is organized as follows:
 
+
 - `attacks/`  :radioactive:	
 
 This directory contains scripts and resources for generating adversarial attacks on models, including methods like FGSM, PGD, and C&W.
+
 
 - `datasets/`
 
 This directory contains the process of constructing a dataset from multiple image directories, including the various datasets used for training the model.
 
+
 - `defences/`
 
-Scripts and resources for implementing defensive techniques against adversarial attacks. These include image transformation methods such as grayscale, thresholding, and adversarial training.
+Scripts and resources for implementing defensive techniques against adversarial attacks. These include image transformation methods such as grayscale, thresholding, and taking gradients.
+
 
 - `deploy/`
 
 Contains deployment-related resources, including the frontend for deploying the model.
 
+
 - `models/`
 
 Includes code for training, testing, and dividing data for the model used in the project.
 
+
 - `notebooks/`
 
 Jupyter notebooks for data exploration, model training, and testing.
+
 
 ## Installation :wrench:
 
