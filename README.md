@@ -34,16 +34,17 @@ The project is organized as follows:
    ```git clone https://github.com/ArtMGreen/anticrawler.git```
 2. Navigate to the project directory:
    ```cd anticrawler```
-3. Install the required dependencies:
-  ```pip install -r requirements.txt```
-4. To run the entire app using Docker, just run this command in terminal:
+3. To run the entire app using Docker, just run this command in terminal:
    ```docker compose up```.
-
-To run the app locally:
-
-5. Run the backend app `main.py`.
    
-6. Run the frontend app through this command:
-   ```streamlit run app.py --server.port=8501```.
-
-In both cases, the app will be accessible through your browser at `localhost:8501`.
+   To run the app locally:
+   
+    a) Install the required dependencies:
+     ```pip install -r requirements.txt```
+   
+    b) Run the backend app `main.py`.
+   
+    c) Run the frontend app through this command:
+      ```streamlit run app.py --server.port=8501```.
+   
+   In both cases, the app will be accessible through your browser at `localhost:8501`.
