@@ -1,4 +1,4 @@
-# Anicrawler :space_invader:
+# Anticrawler :space_invader:
 
 **Adversarial attacks and defenses for CAPTCHA recognition model.**
 
@@ -16,7 +16,7 @@ The project is organized as follows:
 - `datasets/` contains the process of constructing a dataset from multiple image directories, including the various datasets used for training the model.
 
 
-- `defences/`  - scripts and resources for implementing defensive techniques against adversarial attacks. These include image transformation methods such as grayscale, thresholding, and taking gradients.
+- `defences/` - scripts and resources for implementing defensive techniques against adversarial attacks. These include image transformation methods such as grayscale, thresholding, and taking gradients.
 
 
 - `deploy/` contains deployment-related resources, including the frontend for deploying the model.
