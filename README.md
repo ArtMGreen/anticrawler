@@ -2,6 +2,8 @@
 
 **Adversarial attacks and defenses for CAPTCHA recognition model.**
 
+(small note for graders: come to `models/resnet_captcha_recognizer.py`, we used it as a grand-control script to train and evaluate our models. For even better experience after training, follow the `Installation` section below to run the overviewing app you had seen during the presentation)
+
 ## Project Overview
 This repository explores different adversarial attacks and defensive methods applied to CAPTCHA recognition models. The goal is to test and implement various attack techniques (such as FGSM, PGD, C&W) and evaluate the effectiveness of different defensive strategies (including adversarial training, image transformations, and more).
 
